@@ -1,12 +1,14 @@
 package backend.task;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,29 +33,57 @@ public class TaskController {
     }
 
     public record CreateTaskRequest(
-        @NotBlank @Size(max = 200) String title
+        @NotBlank @Size(max = 50) String title,
+        @Size(max = 1000) String description,
+        @Size(max = 50) String status,
+        LocalDateTime dueDate
     ) {}
 
-    @GetMapping
-    public List<Task> getTasks() {
-        return repository.findAll();
+    @GetMapping("/list")
+    public ResponseEntity<List<Task>> getTasks() {
+        return ResponseEntity.ok(repository.findAll());
     }
 
-    @PostMapping
+    @GetMapping("/retrieve/{id}")
+    public ResponseEntity<Task> getTask(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public Task createTask(
+    public ResponseEntity<Task> createTask(
             @Valid @RequestBody CreateTaskRequest request) {
-        return repository.save(new Task(request.title().trim()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new Task(
+            request.title().trim(),
+            request.description().trim(),
+            request.status().trim(),
+            request.dueDate())));
     }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/update/{id}")
+    public ResponseEntity<Void> postMethodName(@PathVariable Long id, @RequestBody Task entity) {
+            if (!repository.existsById(id)) {
+                throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Task not found");
+        }
+        repository.updateTaskById(id, entity.getTitle(),
+            entity.getDescription(), 
+            entity.getStatus(), 
+            entity.getDueDate());
+        return ResponseEntity.ok().build();
+    }
+    
+
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTask(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         if (!repository.existsById(id)) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Task not found");
         }
-
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
