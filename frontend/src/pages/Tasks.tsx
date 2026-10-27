@@ -1,10 +1,34 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 
 export default function Tasks() {
     const API_URL = "http://127.0.0.1:8080";
 
     const [tasks, setTasks] = useState([]);
+    const [count, setCount] = useState(0);
+    const [selectedTaskButton, setSelectedTaskButton] = useState<string | null>(null);
+    const [selectedFilterButton, setSelectedFilterButton] = useState<string | null>(null);
+    const [showModal, setShowModal] = useState(false);
+    const [searchID, setSearchID] = useState('');
+    const [deleteID, setDeleteID] = useState([]);
+
+    const taskButton = (label: string) =>
+        <div className="level-item">
+            <button className="button is-fullwidth is-responsive is-rounded" style={{
+                color: "white",
+                backgroundColor: "#7e1212",
+            }}>{label}</button></div>
+
+    const handleFilterButtonClick = (label: string) => selectedFilterButton === label ? "is-dark" : "is-light";
+
+    const filterButton = (label: string) =>
+        <button
+            key={label}
+            className={"button is-fullwidth is-responsive is-rounded " + handleFilterButtonClick(label)}
+            onClick={() => setSelectedFilterButton(label)}>
+            {label}
+        </button>
+
+    console.log("Selected Filter Button:", selectedFilterButton);
 
     const fetchAllTasks = async () => {
         try {
@@ -21,6 +45,7 @@ export default function Tasks() {
             }
 
             const data = await response.json();
+            setCount(data.length);
             setTasks(data);
 
         } catch (error) {
@@ -32,54 +57,71 @@ export default function Tasks() {
         fetchAllTasks();
     }, []);
 
-    console.log("Tasks:", tasks);
-
     return (
         <main >
-            <h1 className="title">TASKBOARD</h1>
 
-            <div className="level-left is-fullwidth" style={{ margin: "1rem 0" }}  >
-                <div className="level-item">
-                    <p className="subtitle is-5"><strong>123</strong> tasks</p>
+            <div className="level">
+                <div className="level-left">
+                    <div className="level-item">
+                        <h1 className="title">TASKS</h1>
+                    </div>
                 </div>
-                <div className="level-item">
+
+                <div className="level-right">
+                    {taskButton("+ New Task")}
+                    {taskButton("\u2716 Delete Task")}
+                </div>
+            </div>
+
+
+            <div className="columns is-vcentered">
+
+                <div className="column is-narrow">
+                    <p className="subtitle is-5">
+                        <strong>{count}</strong> tasks
+                    </p>
+                </div>
+
+                <div className="column is-narrow">
                     <div className="field has-addons">
                         <p className="control">
-                            <input className="input" type="text" placeholder="Find a task" />
+                            <input
+                                className="input"
+                                type="text"
+                                placeholder="Find a task"
+                            />
                         </p>
                         <p className="control">
                             <button className="button">Search</button>
                         </p>
                     </div>
                 </div>
-                <button className="button is-fullwidth" style={{
-                    margin: "1rem 0",
-                    color: "red",
-                    backgroundColor: "var(--accent)"
-                }}>All</button>
-                <button className="button is-fullwidth" style={{
-                    margin: "1rem 0",
-                    color: "red",
-                    backgroundColor: "var(--accent)"
-                }}>TODO</button>
-                <button className="button is-fullwidth" style={{
-                    margin: "1rem 0",
-                    color: "red",
-                    backgroundColor: "var(--accent)"
-                }}>In Progress</button>
-                <button className="button is-fullwidth" style={{
-                    margin: "1rem 0",
-                    color: "red",
-                    backgroundColor: "var(--accent)"
-                }}>+ New Task</button>
-            </div>
 
+                <div className="column">
+                    <div className="columns is-variable is-2">
+                        <div className="column">
+                            {filterButton("All")}
+                        </div>
+                        <div className="column">
+                            {filterButton("TODO")}
+                        </div>
+                        <div className="column">
+                            {filterButton("In Progress")}
+                        </div>
+                        <div className="column">
+                            {filterButton("Done")}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
             <table className="table is-hoverable is-fullwidth">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th><label className="checkbox">
+                            <input type="checkbox" />
+                        </label></th>
                         <th>Id</th>
                         <th>Title</th>
                         <th>Description</th>
@@ -97,7 +139,7 @@ export default function Tasks() {
                             <td>{task.title}</td>
                             <td>{task.description}</td>
                             <td>{task.status}</td>
-                            <td>{task.due_date}</td>
+                            <td>{task.dueDate}</td>
                         </tr>
                     ))}
                 </tbody>
