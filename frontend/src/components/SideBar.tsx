@@ -7,8 +7,9 @@ export default function Sidebar() {
         <h2>ZEUS TASK MANAGER</h2>
         <div className="menu-title">Menu</div>
         <nav>
-            <Link to="/">Home</Link>
-            <Link to="/dashboard">Calendar</Link>
+            <Link to="/tasks">Tasks</Link>
+            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/calendar">Calendar</Link>
             <Link to="/settings">Settings</Link>
         </nav>
         </aside>
