@@ -1,4 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { CreateTaskModal } from '../components/Modal';
+
+import "bulma/css/bulma.min.css";
+import "../App.css";
 
 export default function Tasks() {
     const API_URL = "http://127.0.0.1:8080";
@@ -11,24 +15,34 @@ export default function Tasks() {
     const [searchID, setSearchID] = useState('');
     const [deleteID, setDeleteID] = useState([]);
 
+    const taskActions = {
+        newTask : "+ New Task",
+        delete : "\u2716 Delete Task" 
+    };
+
     const taskButton = (label: string) =>
         <div className="level-item">
-            <button className="button is-fullwidth is-responsive is-rounded" style={{
+            <button className="button is-fullwidth is-responsive is-rounded" 
+            style={{
                 color: "white",
                 backgroundColor: "#7e1212",
-            }}>{label}</button></div>
-
-    const handleFilterButtonClick = (label: string) => selectedFilterButton === label ? "is-dark" : "is-light";
+            }}
+            onClick={() => setSelectedTaskButton(label)}>
+            {label}
+        </button>
+    </div>
 
     const filterButton = (label: string) =>
         <button
             key={label}
-            className={"button is-fullwidth is-responsive is-rounded " + handleFilterButtonClick(label)}
+            className={"button is-fullwidth is-responsive is-rounded "}
+            style={{
+                color: label === selectedFilterButton ? "white" : "black",
+                backgroundColor: label === selectedFilterButton ? "#7e1212" : "white",
+            }}
             onClick={() => setSelectedFilterButton(label)}>
             {label}
         </button>
-
-    console.log("Selected Filter Button:", selectedFilterButton);
 
     const fetchAllTasks = async () => {
         try {
@@ -59,6 +73,10 @@ export default function Tasks() {
 
     return (
         <main >
+            <section>
+            {selectedTaskButton === taskActions.newTask && <CreateTaskModal
+            setSelectedTaskButton={setSelectedTaskButton}/>}
+            </section>
 
             <div className="level">
                 <div className="level-left">
@@ -68,14 +86,13 @@ export default function Tasks() {
                 </div>
 
                 <div className="level-right">
-                    {taskButton("+ New Task")}
-                    {taskButton("\u2716 Delete Task")}
+                    {taskButton(taskActions.newTask)}
+                    {taskButton(taskActions.delete)}
                 </div>
             </div>
 
 
             <div className="columns is-vcentered">
-
                 <div className="column is-narrow">
                     <p className="subtitle is-5">
                         <strong>{count}</strong> tasks
