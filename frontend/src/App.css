@@ -113,45 +113,68 @@ body,
   margin: 1rem;
 }
 
+.text-align-left {
+  text-align: left;
+}
+
 .modal.is-active .modal-background {
-    background-color: transparent !important;
+  background-color: transparent !important;
 }
 
 .custom-modal {
-  background-color: rgb(218, 198, 22);
-  color:rgb(218, 198, 22)
+  background-color: #ffd04d;
+  color: black;
+  border-radius: 20px
+}
+
+.custom-modal .label {
+  text-align: left;
+}
+
+.custom-modal .modal-card-body {
+  flex-grow: 0;
+  flex-shrink: 1;
+  overflow-y: auto;
 }
 
 .task-datetime {
-    background-color: #f8fafc;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    color: #1f2937;
-    padding: 0.75rem 1rem;
-    height: 3rem;
-    font-family: inherit;
-    box-shadow: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #f8fafc;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #1f2937;
+  padding: 0.75rem 1rem;
+  height: 3rem;
+  font-family: inherit;
+  box-shadow: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* When focused */
 .task-datetime:focus {
-    border-color: #485fc7;
-    box-shadow: 0 0 0 0.125em rgba(72, 95, 199, 0.2);
-    outline: none;
+  border-color: #485fc7;
+  box-shadow: 0 0 0 0.125em rgba(72, 95, 199, 0.2);
+  outline: none;
 }
 
-/* Hover */
 .task-datetime:hover {
-    border-color: #485fc7;
+  border-color: #485fc7;
 }
 
-/* Calendar icon in Chromium browsers */
 .task-datetime::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 0.7;
+  cursor: pointer;
+  opacity: 0.7;
 }
 
 .task-datetime::-webkit-calendar-picker-indicator:hover {
-    opacity: 1;
+  opacity: 1;
+}
+
+.datetime-picker {
+  width: 100%;
+  max-width: 400px;
+  height: 45px;
+  font-size: 16px;
+  display: block;
+  cursor: pointer;
+  color: #243047;
+  background-color: #f0f4ff;
 }

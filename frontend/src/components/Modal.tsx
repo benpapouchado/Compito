@@ -4,12 +4,34 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskButton: (value: string) => void; }) {
 
-    const API_URL = "http://127.0.0.1:8080";
+    const API_URL = "http://localhost:8080";
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("");
     const [dueDate, setDueDate] = useState("");
+
+    const statuses = {
+        todo: "Todo",
+        inProgress: "In Progress",
+        done: "Done",
+    }
+
+    const [selectedStatusButton, setSelectedStatusButton] = useState<string | null>(statuses.todo);
+
+    const selectStatusButton = (label: string) =>
+        <button
+            key={label}
+            className={"button is-fullwidth is-responsive"}
+            style={{
+                color: label === selectedStatusButton ? "white" : "black",
+                backgroundColor: label === selectedStatusButton ? "#7e1212" : "white",
+            }}
+            onClick={() => {setSelectedStatusButton(label)
+                setStatus(label)
+            }}>
+            {label}
+        </button>    
 
     const createNewTask = async () => {
         try {
@@ -28,25 +50,26 @@ export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskBut
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            console.log(response.status);
-            console.log("task created");
+            setSelectedTaskButton("");
 
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
     };
 
-
     return (
         <div className="modal is-active">
             <div className="modal-background"
-                onClick={() => setSelectedTaskButton("")}></div>
-            <div className="box custom-modal">
-                <header >
-                    <h3 className="modal-card-title">New task</h3>
-                </header>
+                onClick={() => setSelectedTaskButton("")}/
+                >
+
+            <div className="modal-card custom-modal">
+
                 <section className="modal-card-body">
-                    <div className="mb-4">Add it to the board with a status and a due date</div>
+                <header >
+                    <h3 className="modal-card-title md-2 text-align-left"><strong>New task</strong></h3>
+                </header>                    
+                    <div className="mb-4 text-align-left">Add it to the board with a status and a due date</div>
 
                     <div className="field">
                         <label className="label ">Title</label>
@@ -65,68 +88,63 @@ export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskBut
                             <textarea className="textarea"
                                 placeholder="Optional details"
                                 value={description}
-                                onChange={(e) => setDescription(e.target.value)}                            ></textarea>
+                                onChange={(e) => setDescription(e.target.value)}>
+                                </textarea>
                         </div>
                     </div>
 
+                <div className="column">
+                    <div className="columns is-variable is-1">
+                        <div className="column">
+                            {selectStatusButton(statuses.todo)}
+                        </div>
+                        <div className="column">
+                            {selectStatusButton(statuses.inProgress)}
+                        </div>
+                        <div className="column">
+                            {selectStatusButton(statuses.done)}
+                        </div>
+                    </div>
+                </div>                    
 
                     <div className="field">
-                        <label className="label">Status</label>
+                        <label className="label">DUE DATE</label>
                         <div className="control">
-                            <label className="radio mr-4">
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    value="In Progress"
-                                    checked={status === "In Progress"}
-                                    onChange={(e) => setStatus(e.target.value)}
-                                />
-                                In Progress
-                            </label>
-
-                            <label className="radio mr-4">
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    value="Done"
-                                    checked={status === "Done"}
-                                    onChange={(e) => setStatus(e.target.value)}
-                                />
-                                Done
-                            </label>
-
-                            <label className="radio mr-4">
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    value="Todo"
-                                    checked={status === "Todo"}
-                                    onChange={(e) => setStatus(e.target.value)}
-                                />
-                                Todo
-                            </label>
+                            <input
+                                className="datetime-picker task-datetime is-fullwidth"
+                                aria-label="Due date time"
+                                type="datetime-local"
+                                value={dueDate}
+                                onChange={(e) => setDueDate(e.target.value)}
+                                onClick={(e) => { 
+                                    try {
+                                        e.currentTarget.showPicker
+                                    }
+                                    catch {
+                                        console.error("Wont work");
+                                    }
+                                    }}/>
                         </div>
                     </div>
 
-                    <div className="field">
-                        <label className="label">Due Date</label>
-                        <div className="control">
-                            <div>
-                                <input aria-label="Due date time"
-                                    type="datetime-local"
-                                    value={dueDate}
-                                    onChange={(e) => setDueDate(e.target.value)} />
-                            </div>
-                        </div>
+                    <div className="my-4">
+                        <button
+                            className="button is-rounded"
+                            onClick={createNewTask}
+                            style={{
+                                backgroundColor: "#7e1212",
+                                color: "white",
+                            }}>
+                            Create task
+                        </button>
+                        <button
+                            className="button is-rounded"
+                            onClick={() => setSelectedTaskButton("")}>
+                            Cancel
+                        </button>
                     </div>
-
                 </section>
-                <footer >
-                    <div className="buttons">
-                        <button className="button is-success" onClick={() => createNewTask}>Create task</button>
-                        <button className="button" onClick={() => setSelectedTaskButton("")}>Cancel</button>
-                    </div>
-                </footer>
+
             </div>
         </div>
     );
