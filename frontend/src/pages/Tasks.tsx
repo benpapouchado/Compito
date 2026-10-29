@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CreateTaskModal } from '../components/Modal';
+import { CreateTaskModal } from '../components/CreateTaskModal';
 
 import "bulma/css/bulma.min.css";
 import "../App.css";
