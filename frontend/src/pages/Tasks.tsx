@@ -121,7 +121,7 @@ export default function Tasks() {
 
                 <div className="level-right">
                     {taskButton(taskActions.newTask)}
-                    {taskButton(taskActions.delete)}
+                    {taskButton(taskActions.delete + " (" + checked.length + ")")}
                 </div>
             </div>
 
