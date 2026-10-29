@@ -1,19 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CreateTaskModal } from '../components/CreateTaskModal';
+import { DeleteTaskModal } from '../components/DeleteTaskModal';
 
 import "bulma/css/bulma.min.css";
 import "../App.css";
 
+type Task = {
+    id: number;
+    title: string;
+    description: string;
+    status: string;
+    dueDate: string;
+};
+
 export default function Tasks() {
     const API_URL = "http://127.0.0.1:8080";
 
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [count, setCount] = useState(0);
     const [selectedTaskButton, setSelectedTaskButton] = useState<string | null>(null);
     const [selectedFilterButton, setSelectedFilterButton] = useState<string | null>(null);
-    const [showModal, setShowModal] = useState(false);
     const [searchID, setSearchID] = useState('');
-    const [deleteID, setDeleteID] = useState([]);
+    const [allChecked, setAllChecked] = useState(false);
+    const [checked, setChecked] = useState<number[]>([]);
 
     const taskActions = {
         newTask: "+ New Task",
@@ -78,12 +87,29 @@ export default function Tasks() {
         fetchAllTasks();
     }, []);
 
+    const checkboxAddsToDeleteList = (id: number) => {
+        setChecked(checked.includes(id) ? checked.filter(checkedId => checkedId !== id) : [...checked, id]);
+    }
+
+    const checkAllBoxes = (allBoxesChecked : boolean) => {
+        setAllChecked(allBoxesChecked);
+        setChecked(allBoxesChecked ? tasks.map((row) => row.id) : []);
+    }
+
+    console.log(checked);
+
     return (
         <main >
             <section>
                 {selectedTaskButton === taskActions.newTask && <CreateTaskModal
                     setSelectedTaskButton={setSelectedTaskButton}
                     fetchAllTasks={fetchAllTasks} />}
+            </section>
+
+            <section>
+                {selectedTaskButton === taskActions.delete && <DeleteTaskModal
+                    setSelectedTaskButton={setSelectedTaskButton}
+                />}
             </section>
 
             <div className="level">
@@ -145,7 +171,10 @@ export default function Tasks() {
                 <thead>
                     <tr>
                         <th><label className="checkbox">
-                            <input type="checkbox" />
+                            <input type="checkbox" 
+                            checked={allChecked}
+                            onChange={(e) => checkAllBoxes(e.target.checked)}
+                            />
                         </label></th>
                         <th>Id</th>
                         <th>Title</th>
@@ -158,7 +187,11 @@ export default function Tasks() {
                     {tasks.map((task: any) => (
                         <tr key={task.id}>
                             <td><label className="checkbox">
-                                <input type="checkbox" />
+                                <input type="checkbox"
+                                    value={task.id}
+                                    checked={checked.includes(task.id)}
+                                    onChange={(e) => checkboxAddsToDeleteList(Number(e.target.value))} 
+                                    />
                             </label></td>
                             <td>#{task.id}</td>
                             <td>{task.title}</td>
