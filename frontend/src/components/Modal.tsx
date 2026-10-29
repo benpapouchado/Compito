@@ -12,16 +12,16 @@ export function CreateTaskModal({
 
     const API_URL = "http://localhost:8080";
 
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [status, setStatus] = useState("");
-    const [dueDate, setDueDate] = useState("");
-
     const statuses = {
         todo: "Todo",
         inProgress: "In Progress",
         done: "Done",
-    }
+    }    
+
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [status, setStatus] = useState(statuses.todo);
+    const [dueDate, setDueDate] = useState("");
 
     const [selectedStatusButton, setSelectedStatusButton] = useState<string | null>(statuses.todo);
 
