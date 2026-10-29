@@ -16,21 +16,28 @@ export default function Tasks() {
     const [deleteID, setDeleteID] = useState([]);
 
     const taskActions = {
-        newTask : "+ New Task",
-        delete : "\u2716 Delete Task" 
+        newTask: "+ New Task",
+        delete: "\u2716 Delete Task"
     };
+
+    const statuses = {
+        all: "All",
+        todo: "Todo",
+        inProgress: "In Progress",
+        done: "Done",
+    }
 
     const taskButton = (label: string) =>
         <div className="level-item">
-            <button className="button is-fullwidth is-responsive is-rounded" 
-            style={{
-                color: "white",
-                backgroundColor: "#7e1212",
-            }}
-            onClick={() => setSelectedTaskButton(label)}>
-            {label}
-        </button>
-    </div>
+            <button className="button is-fullwidth is-responsive is-rounded"
+                style={{
+                    color: "white",
+                    backgroundColor: "#7e1212",
+                }}
+                onClick={() => setSelectedTaskButton(label)}>
+                {label}
+            </button>
+        </div>
 
     const filterButton = (label: string) =>
         <button
@@ -74,9 +81,9 @@ export default function Tasks() {
     return (
         <main >
             <section>
-            {selectedTaskButton === taskActions.newTask && <CreateTaskModal
-            setSelectedTaskButton={setSelectedTaskButton}
-            fetchAllTasks={fetchAllTasks}/>}
+                {selectedTaskButton === taskActions.newTask && <CreateTaskModal
+                    setSelectedTaskButton={setSelectedTaskButton}
+                    fetchAllTasks={fetchAllTasks} />}
             </section>
 
             <div className="level">
@@ -118,16 +125,16 @@ export default function Tasks() {
                 <div className="column">
                     <div className="columns is-variable is-2">
                         <div className="column">
-                            {filterButton("All")}
+                            {filterButton(statuses.all)}
                         </div>
                         <div className="column">
-                            {filterButton("TODO")}
+                            {filterButton(statuses.todo)}
                         </div>
                         <div className="column">
-                            {filterButton("In Progress")}
+                            {filterButton(statuses.inProgress)}
                         </div>
                         <div className="column">
-                            {filterButton("Done")}
+                            {filterButton(statuses.done)}
                         </div>
                     </div>
                 </div>
