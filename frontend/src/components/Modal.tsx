@@ -2,7 +2,13 @@ import "bulma/css/bulma.min.css";
 import "../App.css";
 import React, { useEffect, useRef, useState } from 'react';
 
-export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskButton: (value: string) => void; }) {
+export function CreateTaskModal({
+    setSelectedTaskButton,
+    fetchAllTasks,
+}: {
+    setSelectedTaskButton: (value: string) => void;
+    fetchAllTasks: () => void;
+}) {
 
     const API_URL = "http://localhost:8080";
 
@@ -27,11 +33,12 @@ export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskBut
                 color: label === selectedStatusButton ? "white" : "black",
                 backgroundColor: label === selectedStatusButton ? "#7e1212" : "white",
             }}
-            onClick={() => {setSelectedStatusButton(label)
+            onClick={() => {
+                setSelectedStatusButton(label)
                 setStatus(label)
             }}>
             {label}
-        </button>    
+        </button>
 
     const createNewTask = async () => {
         try {
@@ -50,7 +57,10 @@ export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskBut
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            setSelectedTaskButton("");
+            if (response.ok) {
+                await fetchAllTasks();
+                setSelectedTaskButton("");
+            }
 
         } catch (error) {
             console.error('Error fetching tasks:', error);
@@ -60,15 +70,15 @@ export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskBut
     return (
         <div className="modal is-active">
             <div className="modal-background"
-                onClick={() => setSelectedTaskButton("")}/
-                >
+                onClick={() => setSelectedTaskButton("")} /
+            >
 
             <div className="modal-card custom-modal">
 
                 <section className="modal-card-body">
-                <header >
-                    <h3 className="modal-card-title md-2 text-align-left"><strong>New task</strong></h3>
-                </header>                    
+                    <header >
+                        <h3 className="modal-card-title md-2 text-align-left"><strong>New task</strong></h3>
+                    </header>
                     <div className="mb-4 text-align-left">Add it to the board with a status and a due date</div>
 
                     <div className="field">
@@ -89,23 +99,23 @@ export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskBut
                                 placeholder="Optional details"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}>
-                                </textarea>
+                            </textarea>
                         </div>
                     </div>
 
-                <div className="column">
-                    <div className="columns is-variable is-1">
-                        <div className="column">
-                            {selectStatusButton(statuses.todo)}
-                        </div>
-                        <div className="column">
-                            {selectStatusButton(statuses.inProgress)}
-                        </div>
-                        <div className="column">
-                            {selectStatusButton(statuses.done)}
+                    <div className="column">
+                        <div className="columns is-variable is-1">
+                            <div className="column">
+                                {selectStatusButton(statuses.todo)}
+                            </div>
+                            <div className="column">
+                                {selectStatusButton(statuses.inProgress)}
+                            </div>
+                            <div className="column">
+                                {selectStatusButton(statuses.done)}
+                            </div>
                         </div>
                     </div>
-                </div>                    
 
                     <div className="field">
                         <label className="label">DUE DATE</label>
@@ -116,14 +126,14 @@ export function CreateTaskModal({ setSelectedTaskButton, }: { setSelectedTaskBut
                                 type="datetime-local"
                                 value={dueDate}
                                 onChange={(e) => setDueDate(e.target.value)}
-                                onClick={(e) => { 
+                                onClick={(e) => {
                                     try {
                                         e.currentTarget.showPicker
                                     }
                                     catch {
                                         console.error("Wont work");
                                     }
-                                    }}/>
+                                }} />
                         </div>
                     </div>
 

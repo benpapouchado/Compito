@@ -75,7 +75,8 @@ export default function Tasks() {
         <main >
             <section>
             {selectedTaskButton === taskActions.newTask && <CreateTaskModal
-            setSelectedTaskButton={setSelectedTaskButton}/>}
+            setSelectedTaskButton={setSelectedTaskButton}
+            fetchAllTasks={fetchAllTasks}/>}
             </section>
 
             <div className="level">
