@@ -1,6 +1,6 @@
 import "bulma/css/bulma.min.css";
 import "../App.css";
-import React, { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 export function CreateTaskModal({
     setSelectedTaskButton,
