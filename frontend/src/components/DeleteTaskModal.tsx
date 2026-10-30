@@ -21,7 +21,7 @@ export function DeleteTaskModal(ids : number[], {
             }
 
             if (response.ok) {
-                await fetchAllTasks();
+                fetchAllTasks();
                 setSelectedTaskButton("");
             }
 

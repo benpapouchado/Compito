@@ -58,7 +58,7 @@ export function CreateTaskModal({
             }
 
             if (response.ok) {
-                await fetchAllTasks();
+                fetchAllTasks();
                 setSelectedTaskButton("");
             }
 
