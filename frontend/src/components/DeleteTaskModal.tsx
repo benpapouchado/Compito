@@ -12,8 +12,9 @@ export function DeleteTaskModal(ids: number[], {
 
     const deleteTasks = async () => {
         try {
-            const response = await fetch(`${API_URL}/api/tasks/delete/${ids.join(",")}`, {
+            const response = await fetch(`${API_URL}/api/tasks/delete?ids=${ids.join(",")}`, {
                 method: "DELETE",
+
             });
 
             if (!response.ok) {
@@ -51,7 +52,7 @@ export function DeleteTaskModal(ids: number[], {
                     <div className="my-4">
                         <button
                             className="button is-rounded"
-                            onChange={deleteTasks}
+                            onClick={deleteTasks}
                             style={{
                                 backgroundColor: "#7e1212",
                                 color: "white",
