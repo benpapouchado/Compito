@@ -1,6 +1,6 @@
 
 
-export function DeleteTaskModal(ids : number[], {
+export function DeleteTaskModal(ids: number[], {
     setSelectedTaskButton,
     fetchAllTasks,
 }: {
@@ -13,7 +13,7 @@ export function DeleteTaskModal(ids : number[], {
     const deleteTasks = async () => {
         try {
             const response = await fetch(`${API_URL}/api/tasks/delete/${ids.join(",")}`, {
-                method: "DELETE",        
+                method: "DELETE",
             });
 
             if (!response.ok) {
@@ -30,23 +30,28 @@ export function DeleteTaskModal(ids : number[], {
         }
     };
 
+    const modalHeader = ids.length > 1 ? "Delete Task" : "Delete Tasks";
+    const modalContent = ids.length > 1 ? "Are you sure you want to delete " + ids.length + " tasks?" :
+        "Are you sure you want to delete " + ids.length + " task?";
+
     return (
         <div className="modal is-active">
             <div className="modal-background"
-                onClick={() => setSelectedTaskButton("")} /
-            >
+                onClick={() => setSelectedTaskButton("")} />
 
             <div className="modal-card custom-modal">
 
                 <section className="modal-card-body">
                     <header >
-                        <h3 className="modal-card-title md-2 text-align-left"><strong>Delete task</strong></h3>
+                        <h3 className="modal-card-title md-2 text-align-left"><strong>{modalHeader}</strong></h3>
                     </header>
+
+                    <div className="my-3 text-align-left">{modalContent}</div>
 
                     <div className="my-4">
                         <button
                             className="button is-rounded"
-                            // onClick={createNewTask}
+                            onChange={deleteTasks}
                             style={{
                                 backgroundColor: "#7e1212",
                                 color: "white",

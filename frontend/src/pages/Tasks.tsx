@@ -16,14 +16,6 @@ type Task = {
 export default function Tasks() {
     const API_URL = "http://127.0.0.1:8080";
 
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [count, setCount] = useState(0);
-    const [selectedTaskButton, setSelectedTaskButton] = useState<string | null>(null);
-    const [selectedFilterButton, setSelectedFilterButton] = useState<string | null>(null);
-    const [searchID, setSearchID] = useState('');
-    const [allChecked, setAllChecked] = useState(false);
-    const [checked, setChecked] = useState<number[]>([]);
-
     const taskActions = {
         newTask: "+ New Task",
         delete: "\u2716 Delete Task"
@@ -36,7 +28,15 @@ export default function Tasks() {
         done: "Done",
     }
 
-    const taskButton = (label: string) =>
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [count, setCount] = useState(0);
+    const [selectedTaskButton, setSelectedTaskButton] = useState<string | null>(null);
+    const [selectedFilterButton, setSelectedFilterButton] = useState<string | null>(statuses.all);
+    const [searchID, setSearchID] = useState('');
+    const [allChecked, setAllChecked] = useState(false);
+    const [checked, setChecked] = useState<number[]>([]);
+
+    const newTaskButton = (label: string) =>
         <div className="level-item">
             <button className="button is-fullwidth is-responsive is-rounded"
                 style={{
@@ -47,6 +47,35 @@ export default function Tasks() {
                 {label}
             </button>
         </div>
+
+    const deleteTaskButton = (label: string, rows?: string) => {
+        if (checked.length === 0) {
+            return (
+                <div className="level-item">
+                    <button className="button is-fullwidth is-disabled is-rounded"
+                        style={{
+                            color: "white",
+                            backgroundColor: "#bb5e5e",
+                        }}>
+                        {label + rows}
+                    </button>
+                </div>
+            );
+        } else {
+            return (
+        <div className="level-item">
+            <button className="button is-fullwidth is-responsive is-rounded"
+                style={{
+                    color: "white",
+                    backgroundColor: "#7e1212",
+                }}
+                onClick={() => setSelectedTaskButton(label)}>
+                {label + rows}
+            </button>
+        </div>
+            );
+        }
+    }
 
     const filterButton = (label: string) =>
         <button
@@ -91,7 +120,7 @@ export default function Tasks() {
         setChecked(checked.includes(id) ? checked.filter(checkedId => checkedId !== id) : [...checked, id]);
     }
 
-    const checkAllBoxes = (allBoxesChecked : boolean) => {
+    const checkAllBoxes = (allBoxesChecked: boolean) => {
         setAllChecked(allBoxesChecked);
         setChecked(allBoxesChecked ? tasks.map((row) => row.id) : []);
     }
@@ -121,8 +150,8 @@ export default function Tasks() {
                 </div>
 
                 <div className="level-right">
-                    {taskButton(taskActions.newTask)}
-                    {taskButton(taskActions.delete + " (" + checked.length + ")")}
+                    {newTaskButton(taskActions.newTask)}
+                    {deleteTaskButton(taskActions.delete, " (" + checked.length + ")")}
                 </div>
             </div>
 
