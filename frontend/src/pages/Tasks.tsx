@@ -107,9 +107,10 @@ export default function Tasks() {
             </section>
 
             <section>
-                {selectedTaskButton === taskActions.delete && <DeleteTaskModal
-                    setSelectedTaskButton={setSelectedTaskButton}
-                />}
+                {selectedTaskButton === taskActions.delete && DeleteTaskModal(checked, {
+                    setSelectedTaskButton,
+                    fetchAllTasks,
+                })}
             </section>
 
             <div className="level">

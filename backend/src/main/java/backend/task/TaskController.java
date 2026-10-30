@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.validation.annotation.Validated;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173"})
+@CrossOrigin(origins = { "http://localhost:5173", "http://127.0.0.1:5173" })
 @RequestMapping("/api/tasks")
 @Validated
 public class TaskController {
@@ -36,11 +37,11 @@ public class TaskController {
     }
 
     public record CreateTaskRequest(
-        @NotBlank @Size(max = 50) String title,
-        @Size(max = 1000) String description,
-        @Size(max = 50) String status,
-        LocalDateTime dueDate
-    ) {}
+            @NotBlank @Size(max = 50) String title,
+            @Size(max = 1000) String description,
+            @Size(max = 50) String status,
+            LocalDateTime dueDate) {
+    }
 
     @GetMapping("/hello")
     public String hello() {
@@ -56,7 +57,7 @@ public class TaskController {
     public ResponseEntity<Task> getTask(@PathVariable Long id) {
         if (!repository.existsById(id)) {
             throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Task not found");
+                    HttpStatus.NOT_FOUND, "Task not found");
         }
         return repository.findById(id)
                 .map(ResponseEntity::ok)
@@ -68,31 +69,32 @@ public class TaskController {
     public ResponseEntity<Task> createTask(
             @Valid @RequestBody CreateTaskRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(new Task(
-            request.title().trim(),
-            request.description().trim(),
-            request.status().trim(),
-            request.dueDate())));
+                request.title().trim(),
+                request.description().trim(),
+                request.status().trim(),
+                request.dueDate())));
     }
 
     @PatchMapping("/update/{id}")
     public ResponseEntity<Void> updateTaskStatusById(@PathVariable Long id, @RequestBody Task entity) {
-            if (!repository.existsById(id)) {
-                throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Task not found");
+        if (!repository.existsById(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Task not found");
         }
         repository.updateTaskById(id, entity.getStatus());
         return ResponseEntity.ok().build();
     }
-    
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Task not found");
+    public ResponseEntity<Void> deleteMultipleTasks(@RequestParam List<Long> ids) {
+        for (Long id : ids) {
+            if (!repository.existsById(id)) {
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Task not found");
+            }
         }
-        repository.deleteById(id);
+        repository.deleteRows(ids);
         return ResponseEntity.noContent().build();
     }
 }
