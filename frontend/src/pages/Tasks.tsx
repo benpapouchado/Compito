@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CreateTaskModal } from '../components/CreateTaskModal';
 import { DeleteTaskModal } from '../components/DeleteTaskModal';
+import { EditTaskDropdown } from '../components/EditTaskDropdown';
 
 import "bulma/css/bulma.min.css";
 import "../App.css";
@@ -35,8 +36,10 @@ export default function Tasks() {
     const [searchID, setSearchID] = useState('');
     const [allChecked, setAllChecked] = useState(false);
     const [checked, setChecked] = useState<number[]>([]);
+    const [dropdownOpenOnRow, setDropdownOpenOnRow] = useState<number>(-1);
+    const [changeStatus, setChangeStatus] = useState("");
 
-    const newTaskButton = (label: string) =>
+    const taskButton = (label: string) =>
         <div className="level-item">
             <button className="button is-fullwidth is-responsive is-rounded"
                 style={{
@@ -63,16 +66,16 @@ export default function Tasks() {
             );
         } else {
             return (
-        <div className="level-item">
-            <button className="button is-fullwidth is-responsive is-rounded"
-                style={{
-                    color: "white",
-                    backgroundColor: "#7e1212",
-                }}
-                onClick={() => setSelectedTaskButton(label)}>
-                {label + rows}
-            </button>
-        </div>
+                <div className="level-item">
+                    <button className="button is-fullwidth is-responsive is-rounded"
+                        style={{
+                            color: "white",
+                            backgroundColor: "#7e1212",
+                        }}
+                        onClick={() => setSelectedTaskButton(label)}>
+                        {label + rows}
+                    </button>
+                </div>
             );
         }
     }
@@ -125,8 +128,6 @@ export default function Tasks() {
         setChecked(allBoxesChecked ? tasks.map((row) => row.id) : []);
     }
 
-    console.log(checked);
-
     return (
         <main >
             <section>
@@ -150,7 +151,7 @@ export default function Tasks() {
                 </div>
 
                 <div className="level-right">
-                    {newTaskButton(taskActions.newTask)}
+                    {taskButton(taskActions.newTask)}
                     {deleteTaskButton(taskActions.delete, " (" + checked.length + ")")}
                 </div>
             </div>
@@ -197,13 +198,13 @@ export default function Tasks() {
             </div>
 
 
-            <table className="table is-hoverable is-fullwidth">
+            <table className="table is-hoverable is-fullwidth is-rounded">
                 <thead>
                     <tr>
                         <th><label className="checkbox">
-                            <input type="checkbox" 
-                            checked={allChecked}
-                            onChange={(e) => checkAllBoxes(e.target.checked)}
+                            <input type="checkbox"
+                                checked={allChecked}
+                                onChange={(e) => checkAllBoxes(e.target.checked)}
                             />
                         </label></th>
                         <th>Id</th>
@@ -214,19 +215,23 @@ export default function Tasks() {
                     </tr>
                 </thead>
                 <tbody>
-                    {tasks.map((task: any) => (
+                    {tasks.map((task: Task) => (
                         <tr key={task.id}>
                             <td><label className="checkbox">
                                 <input type="checkbox"
                                     value={task.id}
                                     checked={checked.includes(task.id)}
-                                    onChange={(e) => checkboxAddsToDeleteList(Number(e.target.value))} 
-                                    />
+                                    onChange={(e) => checkboxAddsToDeleteList(Number(e.target.value))}
+                                />
                             </label></td>
                             <td>#{task.id}</td>
                             <td>{task.title}</td>
                             <td>{task.description}</td>
-                            <td>{task.status}</td>
+                            <td>{EditTaskDropdown(task.id, dropdownOpenOnRow, task.status, changeStatus, {
+                                setDropdownOpenOnRow,
+                                setChangeStatus,
+                                fetchAllTasks,
+                            })}</td>
                             <td>{task.dueDate}</td>
                         </tr>
                     ))}

@@ -40,6 +40,11 @@ public class Task {
         this.dueDate = dueDate;
     }
 
+    public Task(String status) {
+        this.status = status;
+    }
+
+
     public Long getId() {
         return id;
     }
